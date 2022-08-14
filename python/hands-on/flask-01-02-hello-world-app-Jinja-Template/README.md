@@ -62,7 +62,7 @@ Followings are some of features of Flask Framework;
 
 
 ## Part 2 - Write a Simple Hello World Web Application on GitHub Repo
-
+  pip install flask veya flask --version
 - Create folder named `flask-01-02-hello-world-app-Jinja-Template` within your repo under `python/hands-on` folder and go under it.
 
 - Create folder named `flask-01-hello-world-app`
@@ -71,24 +71,54 @@ Followings are some of features of Flask Framework;
 
 - Import Flask module.
 
+   from flask import Flask
+
+   app = Flask(__name__) # bu pythonda özel bir değişken
+
+   if __name__ == '__main__':
+    app.run(debug=True, port=2000) # default 5000
+
+    bu üç kod yazıldıktan sonra web sitesinin çalışması için olan alt yapı kurulmuş oluyor....
+
+    bu hali ile çalıştır request yapıuoruz karşılığında hiçbir response yok.... onu göster....
+
 - Create an object named `app` from imported Flask module.
 
-- Create a function `hello` which returns a string `Hello World`.
 
+
+- Create a function `hello` which returns a string `Hello World`.
+ Merhaba Dünya" dizesini döndüren bir "merhaba" işlevi oluşturun. ve bunu url ye assing edin diyor....
 - Assign a URL route the `hello` function with decorator `@app.route('/')`.
+
+@app.route('/')
+def hello():
+    return 'Hello World from **Flask**!!!'
 
 - Create a function `second` which returns a string `This is the second page` and assign a URL route the `second` function with decorator `@app.route('/second')`. 
 
+@app.route('/second')
+def second():
+    return 'Group Penguins!!!'
+
 - Create a function `third` which returns a string `This is the subpage of third page` and assign a URL route the `third` function with decorator `@app.route('/third/subthird')`. 
 
+@app.route('/third/subthird')
+def third():
+    return 'This is the subpage of third page'
+
 - Create a dynamic url which takes id number dynamically and return with a massage which show id of page.
+Dinamik url oluştur diyor .. Dinamik url değişen url demek kısaca...
+
+@app.route('/forth/<string:id>')
+def forth(id):
+    return f'Id number of this page is {id}'
 
 - run the application in debug mode
 
 - Connect the Hello World application from the web browser with `localhost:5000` or `127.0.0.1:5000`
 
 - to reach application from anywhere on port 80, change debug mode
-
+heryerden ulaş diyor applicationa
 - Save the complete code as `hello-world-app.py` file under `hands-on/flask-01-02-hello-world-app-Jinja-Template/flask-01-hello-world-app` folder.
 
 - Add and commit all changes on local repo
