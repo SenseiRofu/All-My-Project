@@ -1,6 +1,6 @@
-# Hands-on DS-01 
+# Hands-on IAM-01 
 
-Purpose of the this hands-on training is to give basic understanding of AWS and IAM 
+Purpose of the this hands-on training is to give basic understanding of how to use IAM and IAM components.
 
 ## Learning Outcomes
 
@@ -14,15 +14,24 @@ At the end of the this hands-on training, students will be able to;
 
 - create a settings for IAM user
 
+- create a group
+
+- anatomy of the policy and attaching policy to identities. 
+
 - make troubleshooting about credentials
 
-- create a Billing Alarm
+- create role and attach to EC2
 
 ## Outline
 
 - Part 1 - Creating IAM user and arrange user settings
-- Part 2 - Troubleshooting about credentials
-- Part 3 - Creating a Billing Alarm
+
+- Part 2 - Creating Groups
+
+- Part 3 - Troubleshooting about credentials
+
+- Part 4 - Creating role and attaching to EC2
+
 
 ## Part 1 - Creating IAM user and arrange user settings
 
@@ -47,67 +56,94 @@ At the end of the this hands-on training, students will be able to;
 
 - Check the users and Billing services to be accessible or not.
 
+## Part 2 - Creating Groups
 
+### Step 1  - Creating users of Database and Database Group
 
-##  Part 2 - Troubleshooting about credentials
+- Create group of database 
+- Explain why we use group
+- Explain inline policy and group relation
+- Assign users to the Database Group
+
+### Step 2 Create users of Developer and Developer Group
+
+- Create group of Developer
+- Assign users to the Developer Group
+- Ask the status of the user without policy when you delete the group which has policy 
+
+### Step 3 Create users of AWS_DEVOPS and AWS_DEVOPS Group
+
+- Create group  with "power user" policy
+- Explain Power User
+- Assign user to the group while creating users.
+- Show the permissions of group and users.
+
+##  Part 3 - Troubleshooting about credentials
 
 ### Step 1 - What if you forget the password 
 
-- Click User>>>>> Select user ---->>Security Credential--->> Console Password---> Click "Manage"--->>Set  password >>>> Custom password
+- Click User>>>>> Select user---->>Security Credential--->> Console Password---> Click "Manage"--->>Set  password >>>> Custom password
 
 ### Step 2-  What if you forgot your secret access keys key 
 
   Click User>>>>> Select user---->>Security Credential--->> Go Access keys ---> Deactivate---->> Delete --->>>Create new 
 
 
-##  Part 3 Creating a Billing Alarm
+##  Part 4 - Creating role and attaching to EC2
 
-- go to the AWS cloudwatch service
-- navigate to to the Left hand menu select 
+- Create a role :
+
+```text
+Trusted Entity : AWS services
+Use case       : EC2
+Permission     : S3FullAccess
+Name           : MyFirstRole
+```
+- Launch an Instance ******without role :
+
+```text
+-AMI             : Amazon Linux 2
+-Instance Type   : t2.micro
+-Step 3: Configure Instance Details:
+
+  - ****IAM role     : "None"
+
+  - User data       :
+
+#!/bin/bash
+
+yum update -y
+yum install -y httpd
+cd /var/www/html
+aws s3 cp s3://osvaldo-pipeline-production/index.html .
+aws s3 cp s3://osvaldo-pipeline-production/cat.jpg .
+systemctl enable httpd
+systemctl start httpd 
+
+- Security Group: HTTP & SSH Allowed
 
 ```
-   >>> Alarms >>>> All Alarms !!!!! (Since you have already a billing alarm you may not see the same page with student  if you use "Billing" tab )
+- Launch an Instance with  ****MyFirstRole:
+```text
+-AMI             : Amazon Linux 2
+-Instance Type   : t2.micro
+-Step 3: Configure Instance Details:
 
-```   
-- CLick on Create Alarms
+  - ****IAM role     : MyFirstRole
 
-``` 
-  Select   "Metric >>> Billing >>> Total Estimated Charge >>> Currancy USD"
-``` 
-- Then click Select metric.
-- Specify metric and conditions:
+  - User data       :
 
-``` 
-  Metric: keep it as is
-  Conditions: 
-     Threshold type                 : "Static "
-     Whenever EstimatedCharges is...: "Greater or Greater/Equal"
-     than..                         : 5/10 USD 
-     Additional configuration       : Keep it as is
+#!/bin/bash
 
-``` 
+yum update -y
+yum install -y httpd
+cd /var/www/html
+aws s3 cp s3://osvaldo-pipeline-production/index.html .
+aws s3 cp s3://osvaldo-pipeline-production/cat.jpg .
+systemctl enable httpd
+systemctl start httpd 
 
+- Security Group: HTTP & SSH Allowed
 
-- Configure actions: 
-``` 
-  1.Notification:
-    a.Alarm state trigger: In alarm (keep it as is)
-    b.Send a notification to the following SNS topic:
-        1) Select "Create new topic"
-           - Enter Topic name 
-           - Enter email
-        2) Click on create Topic
-        3) Go to the email and "Confirm subscription"
-             
-  2. Auto Scaling action    : keep it as is
-  3. EC2 action             : keep it as is
-  4. Systems Manager action : keep it as is
-``` 
-- Click on next 
-
-- Add name and description:
-``` 
-  Alarm name  : Billing Alarm
-  Descriptions: optional
-``` 
-- Preview and create
+```
+- Show that the instance without role wasn't able to access S3 bucket. So the web page couldn't fetch the index.html and cat.jpg file.
