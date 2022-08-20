@@ -259,7 +259,7 @@ sort -r marks.txt
 cat << EOF > trainees.txt
 john
 james
-aeron
+aaron
 oliver
 walter
 albert
@@ -267,11 +267,11 @@ james
 john
 travis
 mike
-aeron
+aaron
 thomas
 daniel
 john
-aeron
+aaron
 oliver
 mike
 john
@@ -304,7 +304,7 @@ of second file, and third column indicates matching items of both the files.
 ​
 ```bash
 cat << EOF > file1.txt
-Aeron
+Aaron
 Bill
 James
 John
