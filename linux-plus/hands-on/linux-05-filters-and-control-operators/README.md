@@ -217,17 +217,17 @@ wc -l /etc/passwd
 ​
 ```bash
 cat << EOF > marks.txt
-aaron
-julia
-albert
-james
-kate
-john
-oliver
-tom
-victor
-walter
-jane
+aaron   70
+julia   80
+albert  90
+james   60
+kate    60
+john    80
+oliver  75
+tom     54
+victor  30
+walter  60
+jane    100
 EOF
 ```
 
@@ -259,7 +259,7 @@ sort -r marks.txt
 cat << EOF > trainees.txt
 john
 james
-aeron
+aaron
 oliver
 walter
 albert
@@ -267,11 +267,11 @@ james
 john
 travis
 mike
-aeron
+aaron
 thomas
 daniel
 john
-aeron
+aaron
 oliver
 mike
 john
@@ -304,7 +304,7 @@ of second file, and third column indicates matching items of both the files.
 ​
 ```bash
 cat << EOF > file1.txt
-Aeron
+Aaron
 Bill
 James
 John
@@ -402,6 +402,16 @@ echo $?
 lss
 echo $?
 ```
+
+Exit Code | Meaning |
+|:-------:|---------|
+|1| Catchall for general errors
+|2| Misuse of shell builtins
+|126| Command invoked cannot execute
+|127| Command not found
+|128| Invalid argument to exit
+|128+n| Fatal error signal "n"
+|255| Exit status out of range (exit takes only integer args in the range 0 - 255)
 
 >**&&**
 
