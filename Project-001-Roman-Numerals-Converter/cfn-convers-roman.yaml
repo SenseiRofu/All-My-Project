@@ -18,7 +18,7 @@ Resources:
       InstanceType: t2.micro
       KeyName: !Ref KeyPair
       SecurityGroups:
-      - SecGroupForHttpandSSH
+      - SecGroupForHttpandSSH  
       UserData: !Base64 |
         #!/bin/bash
         yum update -y 
@@ -35,7 +35,7 @@ Resources:
           Value: !Sub Web Server of ${AWS::StackName} Stack
   
 Outputs:
-   WebSiteURL:
+  WebSiteURL:
     Value: !Sub 
       - http://${PublicAddress}
       - PublicAddress: !GetAtt RomenNumberCFN.PublicDnsName
