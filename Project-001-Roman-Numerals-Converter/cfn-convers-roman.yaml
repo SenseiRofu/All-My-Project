@@ -18,7 +18,7 @@ Resources:
       InstanceType: t2.micro
       KeyName: !Ref KeyPair
       SecurityGroups:
-        SecGroupForHttpandSSHs
+        SecGroupForHttpandSSH
       UserData: !Base64 |
         #!/bin/bash
         yum update -y 
