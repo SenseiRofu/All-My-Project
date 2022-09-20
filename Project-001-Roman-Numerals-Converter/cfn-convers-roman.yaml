@@ -18,7 +18,7 @@ Resources:
       InstanceType: t2.micro
       KeyName: !Ref KeyPair
       SecurityGroups:
-        SecGroupForHttpandSSH
+      - SecGroupForHttpandSSH
       UserData: !Base64 |
         #!/bin/bash
         yum update -y 
@@ -30,7 +30,6 @@ Resources:
         cd 
         cd /home/ec2-user/All-My-Project/Project-001-Roman-Numerals-Converter/
         python3 app.py
-  
       Tags:
         - Key: Name
           Value: !Sub Web Server of ${AWS::StackName} Stack
