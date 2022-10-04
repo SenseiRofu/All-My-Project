@@ -6,16 +6,16 @@ from flaskext.mysql import MySQL
 app = Flask(__name__)
 
 # This "/home/ec2-user/dbserver.endpoint" file has to be created from cloudformation template and it has RDS endpoint
-db_endpoint = open("/home/ec2-user/dbserver.endpoint", 'r', encoding='UTF-8') 
+# db_endpoint = open("/home/ec2-user/dbserver.endpoint", 'r', encoding='UTF-8') 
 
 # Configure mysql database
 
-app.config['MYSQL_DATABASE_HOST'] = db_endpoint.readline().strip()
+app.config['MYSQL_DATABASE_HOST'] = 'rofu-db.cfytldml7ho3.us-east-1.rds.amazonaws.com'
 app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Please_Enter_Your_DB_Password'
-app.config['MYSQL_DATABASE_DB'] = 'clarusway_phonebook'
+app.config['MYSQL_DATABASE_PASSWORD'] = '123456789Aa'
+app.config['MYSQL_DATABASE_DB'] = 'phonebookrofu'
 app.config['MYSQL_DATABASE_PORT'] = 3306
-db_endpoint.close()
+#db_endpoint.close()
 mysql = MySQL()
 mysql.init_app(app) 
 connection = mysql.connect()
@@ -26,7 +26,7 @@ cursor = connection.cursor()
 
 def init_phonebook_db():
     phonebook_table = """
-    CREATE TABLE IF NOT EXISTS clarusway_phonebook.phonebook(
+    CREATE TABLE IF NOT EXISTS phonebookrofu.phonebook(
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     number VARCHAR(100) NOT NULL,
@@ -179,5 +179,5 @@ def delete_record():
 # Add a statement to run the Flask application which can be reached from any host on port 80.
 if __name__== '__main__':
     init_phonebook_db()
-    # app.run(debug=True)
-    app.run(host='0.0.0.0', port=80) 
+    app.run(debug=True)
+    #app.run(host='0.0.0.0', port=80) 
