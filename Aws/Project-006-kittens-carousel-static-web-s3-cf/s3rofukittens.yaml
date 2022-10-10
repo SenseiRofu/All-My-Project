@@ -129,6 +129,6 @@ Outputs:
     Value: !GetAtt KittensCloundfront.DomainName
   FullDomainName:
     Description: Full Domain Name of my Application
-    Value: !Ref KittensDomainName
+    Value: !Ref KittensDomainNameRofu
 
     #https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html
