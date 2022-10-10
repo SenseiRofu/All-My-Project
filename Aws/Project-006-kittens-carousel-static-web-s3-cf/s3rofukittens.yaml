@@ -25,7 +25,7 @@ Resources:
   KittensBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref KittensBucket  #bucket adımız
+      Bucket: !Ref KittensBucketzqRofu  #bucket adımız
       PolicyDocument:
         # Version: 2012-10-17
         Statement:
