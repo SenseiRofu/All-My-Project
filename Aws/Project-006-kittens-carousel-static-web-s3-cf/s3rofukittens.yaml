@@ -11,7 +11,7 @@ Parameters:
     AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
  
 Resources:
-  KittensBucket:
+  KittensBucketzqRofu:
     Type: AWS::S3::Bucket
     Properties:
       # AccelerateConfiguration:
@@ -36,7 +36,7 @@ Resources:
             Resource: !Join
               - ''
               - - 'arn:aws:s3:::'
-                - !Ref KittensBucket
+                - !Ref KittensBucketzqRofu
                 - /*
             # Resource: !Join ['', ['arn:aws:s3:::', !Ref 'KittensBucket', /*]] #tek satırda da yazabiliriz.
             Principal: '*'  # her şeye
@@ -75,14 +75,14 @@ Resources:
             QueryString: true 
             Cookies:
               Forward: none #çerezleri iptal ettik.
-          TargetOriginId: KittensAsuman
+          TargetOriginId: KittensRofu
           ViewerProtocolPolicy: allow-all 
         DefaultRootObject: index.html
         Enabled: true #status check 
         HttpVersion: 'http2'
         Origins: 
         - DomainName: !Select [2, !Split ["/", !GetAtt KittensBucket.WebsiteURL]]
-          Id: KittensAsuman
+          Id: KittensRofu
           CustomOriginConfig: 
             OriginProtocolPolicy : http-only  #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-customoriginconfig.html#cfn-cloudfront-distribution-customoriginconfig-originprotocolpolicy
           # OriginAccessControlId: String
@@ -123,7 +123,7 @@ Resources:
 Outputs:
   BucketName: 
     Description: S3 Bucket URL for Kittens Website
-    Value: !GetAtt KittensBucket.WebsiteURL
+    Value: !GetAtt KittensBucketzqRofu.WebsiteURL
   CloudfrontEndpoint:
     Description: Endpoint for Kittens Cloudfront
     Value: !GetAtt KittensCloundfront.DomainName
