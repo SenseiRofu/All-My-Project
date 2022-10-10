@@ -81,7 +81,7 @@ Resources:
         Enabled: true #status check 
         HttpVersion: 'http2'
         Origins: 
-        - DomainName: !Select [2, !Split ["/", !GetAtt KittensBucket.WebsiteURL]]
+        - DomainName: !Select [2, !Split ["/", !GetAtt KittensBucketzqRofu.WebsiteURL]]
           Id: KittensRofu
           CustomOriginConfig: 
             OriginProtocolPolicy : http-only  #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-customoriginconfig.html#cfn-cloudfront-distribution-customoriginconfig-originprotocolpolicy
