@@ -1,0 +1,134 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  clound formation Template for kittens carosel static website deploy on s3 
+Parameters:
+  DomainName:                        #route53 hosted zone:ıd yi seçtik (ana domain)
+    Description: DNS Name of     #  ex. asumankamberoglu.link = hosted zone muz karşıma otamatik olarak çıkacak.
+    Type: AWS::Route53::HostedZone::Id   
+  KittensDomainNameRofu:                   #standart bir parameter seçtim (sub domain)
+    Description: Full domain name for the app  # sub domain bunu biz yazacağız.
+    Type: String
+    AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
+ 
+Resources:
+  KittensBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # AccelerateConfiguration:
+      #   AccelerationStatus: "String"
+      AccessControl: PublicRead
+      BucketName: !Ref KittensDomainNameRofu   #bu kısım sub domain ismi=bucket name olacağı için 8.satırı referans alacak.
+      WebsiteConfiguration:
+        # ErrorDocument: "String"
+        IndexDocument: index.html
+
+  KittensBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref KittensBucket  #bucket adımız
+      PolicyDocument:
+        # Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadforStaticWebsite  #şart değil
+            Action:
+              - 's3:GetObject'
+            Effect: Allow  #izin ver
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref KittensBucket
+                - /*
+            # Resource: !Join ['', ['arn:aws:s3:::', !Ref 'KittensBucket', /*]] #tek satırda da yazabiliriz.
+            Principal: '*'  # her şeye
+            # Condition:
+            #   StringLike:
+            #     'aws:Referer':
+            #       - 'http://www.example.com/*'
+            #       - 'http://example.net/*'
+
+  
+  KittensCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      # CertificateAuthorityArn: "String"
+      # CertificateTransparencyLoggingPreference: ENABLED #güvenlik gerekçesiyle.şeffaflık log kayıtlarını tutuyor
+      DomainName: !Ref KittensDomainName # Required
+      DomainValidationOptions:
+        - DomainName: !Ref KittensDomainName
+          HostedZoneId: !Ref DomainName #hosted zone yazınca geliyor
+      ValidationMethod: DNS #ya e mail ya da dns le olacağının bilgisini verir. 
+#üst satır için; burada belirtilen dns name için certifika çıkar ve certifikayı 53.satırda enable et koru.
+  
+  KittensCloundfront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases: #alternate domain names yani sub domaini yazacağız.
+          - !Ref KittensDomainName
+        Comment: Cloudfront Distribution pointing to Kittens S3 bucket
+        DefaultCacheBehavior:  #projede get ve head e izin vermemizi söylüyor.
+          AllowedMethods:  #izin verilen methodlar
+            - GET
+            - HEAD
+          Compress: true
+          ForwardedValues: 
+            QueryString: true 
+            Cookies:
+              Forward: none #çerezleri iptal ettik.
+          TargetOriginId: KittensAsuman
+          ViewerProtocolPolicy: allow-all 
+        DefaultRootObject: index.html
+        Enabled: true #status check 
+        HttpVersion: 'http2'
+        Origins: 
+        - DomainName: !Select [2, !Split ["/", !GetAtt KittensBucket.WebsiteURL]]
+          Id: KittensAsuman
+          CustomOriginConfig: 
+            OriginProtocolPolicy : http-only  #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-customoriginconfig.html#cfn-cloudfront-distribution-customoriginconfig-originprotocolpolicy
+          # OriginAccessControlId: String
+          # OriginCustomHeaders: 
+          #   - OriginCustomHeader
+          # OriginPath: String
+          # OriginShield: 
+          #   OriginShield
+          # S3OriginConfig: 
+          #   S3OriginConfig
+        PriceClass: PriceClass_All    #en iyi hizmetin verilmesi için oluşturulmuştur. All dediğimizde bütün edge locations ları kullanır.
+        # Restrictions: 
+        #   Restrictions
+        # S3Origin: 
+        #   LegacyS3Origin
+        ViewerCertificate:  
+            AcmCertificateArn: !Ref KittensCertificate #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-viewercertificate.html
+            # CloudFrontDefaultCertificate: Boolean
+            # IamCertificateId: String
+            # MinimumProtocolVersion: String
+            SslSupportMethod: sni-only #bizden istek yapacak kullanıcılar sni mimarisine sahip kullanıcılardan gelen requestleri kabul edeceğiz.
+        # WebACLId: String
+
+  KittensRecordSetGroup:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      # Comment: "String"
+      HostedZoneId: !Ref DomainName
+      # HostedZoneName: "String"
+      RecordSets:
+        - AliasTarget: 
+            DNSName: !GetAtt KittensCloundfront.DomainName
+            # EvaluateTargetHealth: Boolean
+            HostedZoneId: Z2FDTNDATAQYW2 #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html#cfn-route53-aliastarget-dnshostname
+          Name: !Ref KittensDomainName
+          Type: A
+
+Outputs:
+  BucketName: 
+    Description: S3 Bucket URL for Kittens Website
+    Value: !GetAtt KittensBucket.WebsiteURL
+  CloudfrontEndpoint:
+    Description: Endpoint for Kittens Cloudfront
+    Value: !GetAtt KittensCloundfront.DomainName
+  FullDomainName:
+    Description: Full Domain Name of my Application
+    Value: !Ref KittensDomainName
+
+    #https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html
