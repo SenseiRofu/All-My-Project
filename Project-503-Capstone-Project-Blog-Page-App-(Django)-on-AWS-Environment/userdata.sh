@@ -3,13 +3,13 @@ apt-get update -y
 apt-get install git -y
 apt-get install python3 -y
 cd /home/ubuntu/
-TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-git clone https://$TOKEN@<YOUR GITHUB REPO URL>
-cd /home/ubuntu/<YOUR GITHUB REPO NAME>
+TOKEN="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"
+git clone https://$TOKEN@github.com/SenseiRofu/All-My-Project.git
+cd /home/ubuntu/All-My-Project
 apt install python3-pip -y
 apt-get install python3.7-dev libmysqlclient-dev -y
 pip3 install -r requirements.txt
-cd /home/ubuntu/<YOUR GITHUB REPO NAME>/src
+cd /home/ubuntu/All-My-Project/Project-503-Capstone-Project-Blog-Page-App-(Django)-on-AWS-Environment/src
 python3 manage.py collectstatic --noinput
 python3 manage.py makemigrations
 python3 manage.py migrate
